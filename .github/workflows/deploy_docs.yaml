@@ -10,6 +10,8 @@ on:
 
 jobs:
   Build-Documentation:
+    runs-on: ubuntu-latest
+
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     
     steps:
