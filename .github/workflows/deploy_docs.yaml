@@ -1,0 +1,41 @@
+name: Build and Deploy Documentation
+
+on:
+  pull_request:
+    types:
+      - closed
+      
+  # Allows manual triggering with the "Run workflow" button
+  workflow_dispatch:
+
+jobs:
+  Build-Documentation:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v1
+        with:
+          python-version: "3.9"
+
+      - name: Create venv
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+      
+      - name: Set up documentation build
+        run: |
+          source venv/bin/activate
+          pip3 install -r docs/requirements.txt
+
+      - name: Build documentation
+        run: |
+          source venv/bin/activate
+          cd docs
+          make html
+
+      - name: Deploy documentation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_dir: docs/build/html
